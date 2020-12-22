@@ -1,28 +1,30 @@
 services:  
   telegraf:
     image: telegraf:latest
+    command: ["--config-directory","/etc/telegraf/telegraf.d/", "--config","/dev/null"]
     volumes:
-      - ./config/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - ./config/telegraf:/etc/telegraf/telegraf.d:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/hostfs:ro
     environment:
+      HOSTNAME: ${TELEMETRY_SERVE_DOMAIN:-telemetry.infra.owncloud.test}
+      OCIS_HOSTNAME: ${OCIS_HOSTNAME:-ocis.owncloud.test}
       HOST_ETC: /hostfs/etc
       HOST_PROC: /hostfs/proc
       HOST_SYS: /hostfs/sys
       HOST_VAR: /hostfs/var
       HOST_RUN: /hostfs/run
       HOST_MOUNT_PREFIX: /hostfs
-    #privileged: true
-    network_mode: host
-    #ports:
-    #  - "0.0.0.0:9273:9273"
+    #network_mode: host # needed if oCIS exposes metrics on localhost of server
+    ports:
+      - "0.0.0.0:9273:9273" #TODO: remove in favour of proxy
     #labels:
     #  - "traefik.enable=true"
     #  - "traefik.http.routers.telegraf.entrypoints=http"
-    #  - "traefik.http.routers.telegraf.rule=Path(`/metrics`)"
+    #  - "traefik.http.routers.telegraf.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
     #  - "traefik.http.routers.telegraf.middlewares=telegraf-https-redirect"
     #  - "traefik.http.routers.telegraf-secure.entrypoints=https"
-    #  - "traefik.http.routers.telegraf-secure.rule=Path(`/metrics`)"
+    #  - "traefik.http.routers.telegraf-secure.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
     #  - "traefik.http.routers.telegraf-secure.middlewares=telegraf-auth"
     #  - "traefik.http.routers.telegraf-secure.tls=true"
     #  - "traefik.http.routers.telegraf-secure.tls.certresolver=http"
