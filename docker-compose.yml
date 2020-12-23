@@ -1,35 +1,37 @@
+---
+version: "3.7"
+
 services:  
   telegraf:
-    image: telegraf:latest
+    image: telegraf:1.16.3
     command: ["--config-directory","/etc/telegraf/telegraf.d/", "--config","/dev/null"]
     volumes:
-      - ./config/telegraf:/etc/telegraf/telegraf.d:ro
+      - ./config/telegraf:/etc/telegraf/telegraf.d
+      - ./config/telegraf_ocis_specific/${TELEGRAF_OCIS_CONFIG:-ocis_traefik.conf}:/etc/telegraf/telegraf.d/ocis.conf
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/hostfs:ro
+    networks:
+      - ocis-net
     environment:
       HOSTNAME: ${TELEMETRY_SERVE_DOMAIN:-telemetry.infra.owncloud.test}
-      OCIS_HOSTNAME: ${OCIS_HOSTNAME:-ocis.owncloud.test}
       HOST_ETC: /hostfs/etc
       HOST_PROC: /hostfs/proc
       HOST_SYS: /hostfs/sys
       HOST_VAR: /hostfs/var
       HOST_RUN: /hostfs/run
       HOST_MOUNT_PREFIX: /hostfs
-    #network_mode: host # needed if oCIS exposes metrics on localhost of server
-    ports:
-      - "0.0.0.0:9273:9273" #TODO: remove in favour of proxy
-    #labels:
-    #  - "traefik.enable=true"
-    #  - "traefik.http.routers.telegraf.entrypoints=http"
-    #  - "traefik.http.routers.telegraf.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
-    #  - "traefik.http.routers.telegraf.middlewares=telegraf-https-redirect"
-    #  - "traefik.http.routers.telegraf-secure.entrypoints=https"
-    #  - "traefik.http.routers.telegraf-secure.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
-    #  - "traefik.http.routers.telegraf-secure.middlewares=telegraf-auth"
-    #  - "traefik.http.routers.telegraf-secure.tls=true"
-    #  - "traefik.http.routers.telegraf-secure.tls.certresolver=http"
-    #  - "traefik.http.routers.telegraf-secure.service=telegraf"
-    #  - "traefik.http.services.telegraf.loadbalancer.server.port=9273"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.telegraf.entrypoints=http"
+      - "traefik.http.routers.telegraf.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
+      - "traefik.http.middlewares.telegraf-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.telegraf.middlewares=telegraf-https-redirect"
+      - "traefik.http.routers.telegraf-secure.entrypoints=https"
+      - "traefik.http.routers.telegraf-secure.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
+      - "traefik.http.routers.telegraf-secure.tls=true"
+      - "traefik.http.routers.telegraf-secure.tls.certresolver=http"
+      - "traefik.http.routers.telegraf-secure.service=telegraf"
+      - "traefik.http.services.telegraf.loadbalancer.server.port=9273"
     logging: &logging
       driver: "json-file"
       options:
@@ -39,16 +41,18 @@ services:
     
 
   jaeger-agent:
-    image: jaegertracing/jaeger-agent:latest
-    ports:
-      - "127.0.0.1:6831:6831/udp"
+    image: jaegertracing/jaeger-agent:1.21.0
     command: |
       --reporter.grpc.host-port=${JAEGER_COLLECTOR:-jaeger-collector.owncloud.test:443}
       --reporter.grpc.tls.skip-host-verify=${INSECURE:-false}
       --reporter.grpc.tls.enabled=true
       --log-level=error
-    extra_hosts:
-      - jaeger-collector.owncloud.test:172.19.0.1 
+    networks:
+      - ocis-net
     logging:
       <<: *logging
     restart: always
+
+networks:
+  ocis-net:
+    external: true
