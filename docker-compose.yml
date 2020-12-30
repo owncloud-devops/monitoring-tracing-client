@@ -38,15 +38,16 @@ services:
         max-size: "100m"
         max-file: "2"
     restart: always
-    
 
   jaeger-agent:
     image: jaegertracing/jaeger-agent:1.21.0
     command: |
+      --reporter.type=grpc
       --reporter.grpc.host-port=${JAEGER_COLLECTOR:-jaeger-collector.owncloud.test:443}
       --reporter.grpc.tls.skip-host-verify=${INSECURE:-false}
       --reporter.grpc.tls.enabled=true
       --log-level=error
+      --jaeger.tags=OCIS_URL=${OCIS_URL:-ocis.owncloud.test},OCIS_DEPLOYMENT_ID=${OCIS_DEPLOYMENT_ID:-generic_ocis}
     networks:
       - ocis-net
     logging:
