@@ -16,6 +16,8 @@ services:
       - ocis-net
     environment:
       HOSTNAME: ${TELEMETRY_SERVE_DOMAIN:-telemetry.infra.owncloud.test}
+      OCIS_URL: ${OCIS_URL:-ocis.owncloud.test}
+      OCIS_DEPLOYMENT_ID: ${OCIS_DEPLOYMENT_ID:-generic_ocis}
       HOST_ETC: /hostfs/etc
       HOST_PROC: /hostfs/proc
       HOST_SYS: /hostfs/sys
