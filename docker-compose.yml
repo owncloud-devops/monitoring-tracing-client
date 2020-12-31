@@ -63,6 +63,6 @@ services:
     restart: always
 
 networks:
-  # ${NETWORK_NAME:-ocis-net} needs to be external in order to be shared between two docker-compose stacks
-  ${NETWORK_NAME:-${NETWORK_NAME:-ocis-net}}:
+  # needs to be external in order to be shared between two docker-compose stacks
+  ${NETWORK_NAME:-ocis-net}:
     external: true
