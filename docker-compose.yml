@@ -10,8 +10,8 @@ services:
     volumes:
       # host and docker metrics and Prometheus output settings 
       - ./config/telegraf:/etc/telegraf/telegraf.d
-      # Prometheus input settings from oCIS - this config depends on the deployment example
-      - ./config/telegraf_ocis_specific/${TELEGRAF_OCIS_CONFIG:-ocis_all_in_one.conf}:/etc/telegraf/telegraf.d/ocis.conf
+      # specific Prometheus input settings - this config depends on the deployment example
+      - ./config/telegraf_specific_config/${TELEGRAF_SPECIFIC_CONFIG:-none}.conf:/etc/telegraf/telegraf.d/ocis.conf
       # mounts to gather metrics from the host and docker inside the container
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/hostfs:ro
