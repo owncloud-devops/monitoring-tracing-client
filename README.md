@@ -1,6 +1,6 @@
 # Monitoring and tracing client
 
-This monitoring and tracing clients are deployed on our internal oCIS testing instances, as well as our internal testing infrastructure.
+This monitoring and tracing clients are deployed on our internal oCIS testing instances as well as our internal testing infrastructure.
 
 Have a look at:
 
@@ -10,32 +10,32 @@ Have a look at:
 
 ## Overview
 
-For a wider overview on what we try to achieve, see [here](https://owncloud.github.io/ocis/deployment/monitoring-tracing/).
+For a wider overview on what we try to achieve, have a look [here](https://owncloud.github.io/ocis/deployment/monitoring-tracing/).
 
-The following overview will mainly focus on the monitoring & tracing client.
+The following overview focuses mainly on the monitoring & tracing client.
 
 ### Monitoring
 
-This deployment provides Telegraf, wich is used for collecting host and docker metrics, as well as oCIS metrics. These metrics are made available on a metrics endpoint and can be scraped by Prometheus. If you don't use Prometheus as your monitoring plattform like we propose, Telegraf surely provides an output for your plattform too. Telegraf is also configured to add Tags to the collected metrics so that you can properly query them and identify, which oCIS instance and wich host, if it's a multi host oCIS deployment, the metrics originate from.
-In order to make this monitoring client reusable, the config is split up in logical parts and allows you to select the oCIS deployment specific configuration that fits your needs. The configuration differs from deployment to deployment because the oCIS metrics endpoint urls are different eg. if you run oCIS in one container or every extension in its own container.
+This deployment provides Telegraf, which is used for collecting host and docker metrics as well as oCIS metrics. These metrics are available on a metrics endpoint and can be scraped by Prometheus. If you don't use Prometheus as your monitoring platform, Telegraf will most likely provide an output for your platform too. Telegraf is also configured to add tags to the collected metrics so that you can properly query them. It also helps you to identify the origin of metrics, e.g. the oCIS instance and host, in case it is a multi host oCIS deployment.
+In order to make this monitoring client reusable, the configuration is divided in logical parts. This also allows you to select a specific configuration that fits your deployment. There are different configurations e.g. because the oCIS metrics endpoint URLs will be different if you run oCIS in one container or every extension in its own container.
 
 ### Tracing
 
-This deployment provides Jager agent, which acts as kind of relay between the traces generating oCIS extensions and our tracing server. Jaeger agent receives the traces send by oCIS (see the needed configuration for oCIS ([example](https://github.com/owncloud/ocis/blob/master/deployments/examples/ocis_traefik/monitoring_tracing/docker-compose-additions.yml)). The agent adds some process tags, that you later can filter and query traces properly by oCIS instances and hosts and then forwards the traces to the tracing server.
+This deployment provides Jaeger agent, which acts as relay between oCIS extensions, which are generating traces, and our tracing server. Jaeger agent receives the traces sent by oCIS (see the needed configuration for oCIS in this ([example](https://github.com/owncloud/ocis/blob/master/deployments/examples/ocis_traefik/monitoring_tracing/docker-compose-additions.yml)). The agent adds process tags, so that you can filter and query traces by oCIS instances and hosts. Finally it forwards the traces to the tracing server.
 
-## Available oCIS specific Telegraf configurations
+## Available specific Telegraf configurations
 
-`TELEGRAF_SPECIFIC_CONFIG` enables you to select a specific configuration from `./config/telegraf_specific_config` by setting it to the filename without the file extension `.conf`.
+`TELEGRAF_SPECIFIC_CONFIG` enables you to select a specific configuration from `./config/telegraf_specific_config` by setting the variable to the file name without the file extension `.conf`.
 
 Following specific configurations are available:
 
 ### none (`TELEGRAF_SPECIFIC_CONFIG=none`, default)
 
-This provides an empty configuration file. This means no specific configuration is used.
+This option provides an empty configuration file, which means no specific configuration is used.
 
 ### oCIS single container (`TELEGRAF_SPECIFIC_CONFIG=ocis_single_container`)
 
-This provides an specific configuration if you run oCIS in a single container. This needs to be used for following deployment examples:
+This option provides an specific configuration for an oCIS run in a single container. It is applicable for following deployment examples:
 
 - [oCIS with Traefik](https://owncloud.github.io/ocis/deployment/ocis_traefik/)
 - [oCIS with Keycloak](https://owncloud.github.io/ocis/deployment/ocis_keycloak/)
