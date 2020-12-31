@@ -16,7 +16,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/hostfs:ro
     networks:
-      - ${NETWORK_NAME:-ocis-net}
+      - monitoring-tracing
     environment:
       HOSTNAME: ${TELEMETRY_SERVE_DOMAIN:-telemetry.infra.owncloud.test}
       OCIS_URL: ${OCIS_URL:-ocis.owncloud.test}
@@ -57,12 +57,13 @@ services:
       --log-level=error
       --jaeger.tags=OCIS_URL=${OCIS_URL:-ocis.owncloud.test},OCIS_DEPLOYMENT_ID=${OCIS_DEPLOYMENT_ID:-generic_ocis}
     networks:
-      - ${NETWORK_NAME:-ocis-net}
+      - monitoring-tracing
     logging:
       <<: *logging
     restart: always
 
 networks:
   # needs to be external in order to be shared between two docker-compose stacks
-  ${NETWORK_NAME:-ocis-net}:
+  monitoring-tracing:
+    name: ${NETWORK_NAME:-ocis-net}
     external: true
