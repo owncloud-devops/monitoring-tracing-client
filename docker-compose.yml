@@ -4,16 +4,19 @@ version: "3.7"
 services:
   telegraf:
     image: telegraf:1.16.3
-    command: |
+    command: | # only use config directory, but therefore we need to give a empty config file
       --config-directory /etc/telegraf/telegraf.d/
       --config /dev/null
     volumes:
+      # host and docker metrics and Prometheus output settings 
       - ./config/telegraf:/etc/telegraf/telegraf.d
+      # Prometheus input settings from oCIS - this config depends on the deployment example
       - ./config/telegraf_ocis_specific/${TELEGRAF_OCIS_CONFIG:-ocis_all_in_one.conf}:/etc/telegraf/telegraf.d/ocis.conf
+      # mounts to gather metrics from the host and docker inside the container
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/hostfs:ro
     networks:
-      - ocis-net
+      - ${NETWORK_NAME:-ocis-net}
     environment:
       HOSTNAME: ${TELEMETRY_SERVE_DOMAIN:-telemetry.infra.owncloud.test}
       OCIS_URL: ${OCIS_URL:-ocis.owncloud.test}
@@ -25,6 +28,7 @@ services:
       HOST_RUN: /hostfs/run
       HOST_MOUNT_PREFIX: /hostfs
     labels:
+      # make the Prometheus output publicly available so that Prometheus server can scrape this endpoint
       - "traefik.enable=true"
       - "traefik.http.routers.telegraf.entrypoints=http"
       - "traefik.http.routers.telegraf.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
@@ -53,11 +57,12 @@ services:
       --log-level=error
       --jaeger.tags=OCIS_URL=${OCIS_URL:-ocis.owncloud.test},OCIS_DEPLOYMENT_ID=${OCIS_DEPLOYMENT_ID:-generic_ocis}
     networks:
-      - ocis-net
+      - ${NETWORK_NAME:-ocis-net}
     logging:
       <<: *logging
     restart: always
 
 networks:
-  ocis-net:
+  # ${NETWORK_NAME:-ocis-net} needs to be external in order to be shared between two docker-compose stacks
+  ${NETWORK_NAME:-${NETWORK_NAME:-ocis-net}}:
     external: true
