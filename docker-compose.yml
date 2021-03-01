@@ -48,7 +48,7 @@ services:
     restart: always
 
   jaeger-agent:
-    image: jaegertracing/jaeger-agent:1.22.0
+    image: jaegertracing/jaeger-agent:1.21.0
     command: |
       --reporter.type=grpc
       --reporter.grpc.host-port=${JAEGER_COLLECTOR:-jaeger-collector.owncloud.test:443}
