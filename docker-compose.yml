@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   telegraf:
-    image: telegraf:1.17.2
+    image: telegraf:1.17.3
     command: | # only use config directory, but therefore we need to give a empty config file
       --config-directory /etc/telegraf/telegraf.d/
       --config /dev/null
