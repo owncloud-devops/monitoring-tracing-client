@@ -55,7 +55,7 @@ services:
       --reporter.grpc.tls.skip-host-verify=${INSECURE:-false}
       --reporter.grpc.tls.enabled=true
       --log-level=error
-      --jaeger.tags=OCIS_URL=${OCIS_URL:-ocis.owncloud.test},OCIS_DEPLOYMENT_ID=${OCIS_DEPLOYMENT_ID:-generic_ocis}
+      --agent.tags=OCIS_URL=${OCIS_URL:-ocis.owncloud.test},OCIS_DEPLOYMENT_ID=${OCIS_DEPLOYMENT_ID:-generic_ocis}
     networks:
       - monitoring-tracing
     logging:
