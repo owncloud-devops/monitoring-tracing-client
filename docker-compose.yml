@@ -30,15 +30,10 @@ services:
     labels:
       # make the Prometheus output publicly available so that Prometheus server can scrape this endpoint
       - "traefik.enable=true"
-      - "traefik.http.routers.telegraf.entrypoints=http"
+      - "traefik.http.routers.telegraf.entrypoints=https"
       - "traefik.http.routers.telegraf.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
-      - "traefik.http.middlewares.telegraf-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.telegraf.middlewares=telegraf-https-redirect"
-      - "traefik.http.routers.telegraf-secure.entrypoints=https"
-      - "traefik.http.routers.telegraf-secure.rule=Host(`${TELEMETRY_SERVE_DOMAIN:-telemetry.owncloud.test}`)"
-      - "traefik.http.routers.telegraf-secure.tls=true"
-      - "traefik.http.routers.telegraf-secure.tls.certresolver=http"
-      - "traefik.http.routers.telegraf-secure.service=telegraf"
+      - "traefik.http.routers.telegraf.tls.certresolver=http"
+      - "traefik.http.routers.telegraf.service=telegraf"
       - "traefik.http.services.telegraf.loadbalancer.server.port=9273"
     logging: &logging
       driver: "json-file"
