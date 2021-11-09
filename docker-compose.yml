@@ -4,11 +4,12 @@ version: "3.7"
 services:
   telegraf:
     image: telegraf:1.20.3
-    command: | # only use config directory, but therefore we need to give a empty config file
+    command: |
+      --config /etc/telegraf/telegraf.conf
       --config-directory /etc/telegraf/telegraf.d/
-      --config /dev/null
     volumes:
       # host and docker metrics and Prometheus output settings 
+      - ./config/telegraf.conf:/etc/telegraf/telegraf.conf
       - ./config/telegraf:/etc/telegraf/telegraf.d
       # specific Prometheus input settings - this config depends on the deployment example
       - ./config/telegraf_specific_config/${TELEGRAF_SPECIFIC_CONFIG:-none}.conf:/etc/telegraf/telegraf.d/ocis.conf
