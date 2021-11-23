@@ -1,3 +1,10 @@
 {
-  "extends": ["config:base"]
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    "docker:enableMajor",
+    "docker:pinDigests",
+    ":masterIssue",
+    "group:linters"
+  ]
 }
