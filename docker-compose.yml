@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   telegraf:
-    image: telegraf:1.20.1@sha256:f714fc12a0c1a17a2d94d6be15360074369e338067fa870285c846bcc9cc81be
+    image: telegraf:1.20.4@sha256:6a9dada7e7e9180724119a497a28e13910fcefd4473e9378aec96e91f1b37f23
     profiles:
       - monitoring
     networks:
