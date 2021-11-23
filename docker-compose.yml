@@ -4,6 +4,10 @@ version: "3.7"
 services:
   telegraf:
     image: telegraf:1.20.1@sha256:f714fc12a0c1a17a2d94d6be15360074369e338067fa870285c846bcc9cc81be
+    profiles:
+      - monitoring
+    networks:
+      monitoring-tracing:
     command: | # only use config directory, but therefore we need to give a empty config file
       --config-directory /etc/telegraf/telegraf.d/
       --config /dev/null
@@ -15,8 +19,6 @@ services:
       # mounts to gather metrics from the host and docker inside the container
       - /var/run/docker.sock:/var/run/docker.sock
       - /:/hostfs:ro
-    networks:
-      - monitoring-tracing
     environment:
       HOSTNAME: ${TELEMETRY_SERVE_DOMAIN:-telemetry.infra.owncloud.test}
       OCIS_URL: ${OCIS_URL:-ocis.owncloud.test}
@@ -35,15 +37,16 @@ services:
       - "traefik.http.routers.telegraf.tls.certresolver=http"
       - "traefik.http.routers.telegraf.service=telegraf"
       - "traefik.http.services.telegraf.loadbalancer.server.port=9273"
-    logging: &logging
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "2"
+    logging:
+      driver: "local"
     restart: always
 
   jaeger-agent:
     image: jaegertracing/jaeger-agent:1.28.0@sha256:80be5d21e316a4453c5b9dd0419ef4f664a4dc8c854927c9b920b9d1e497dc28
+    profiles:
+      - tracing
+    networks:
+      monitoring-tracing:
     command: |
       --reporter.type=grpc
       --reporter.grpc.host-port=${JAEGER_COLLECTOR:-jaeger-collector.owncloud.test:443}
@@ -51,10 +54,8 @@ services:
       --reporter.grpc.tls.enabled=true
       --log-level=error
       --agent.tags=OCIS_URL=${OCIS_URL:-ocis.owncloud.test},OCIS_DEPLOYMENT_ID=${OCIS_DEPLOYMENT_ID:-generic_ocis}
-    networks:
-      - monitoring-tracing
     logging:
-      <<: *logging
+      driver: "local"
     restart: always
 
 networks:
