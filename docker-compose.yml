@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   telegraf:
-    image: telegraf:1.20.1
+    image: telegraf:1.20.1@sha256:f714fc12a0c1a17a2d94d6be15360074369e338067fa870285c846bcc9cc81be
     command: | # only use config directory, but therefore we need to give a empty config file
       --config-directory /etc/telegraf/telegraf.d/
       --config /dev/null
@@ -43,7 +43,7 @@ services:
     restart: always
 
   jaeger-agent:
-    image: jaegertracing/jaeger-agent:1.28.0
+    image: jaegertracing/jaeger-agent:1.28.0@sha256:80be5d21e316a4453c5b9dd0419ef4f664a4dc8c854927c9b920b9d1e497dc28
     command: |
       --reporter.type=grpc
       --reporter.grpc.host-port=${JAEGER_COLLECTOR:-jaeger-collector.owncloud.test:443}
