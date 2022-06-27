@@ -43,7 +43,7 @@ services:
     restart: always
 
   jaeger-agent:
-    image: jaegertracing/jaeger-agent:1.35.1@sha256:13a8f355a659e9ddb3600b0199b0332a959d0903bd9447cd3adaf20f6c8b7c55
+    image: jaegertracing/jaeger-agent:1.35.2@sha256:11eece527ed8dd9d300601bbf3eb10bdc5cb0b32729ae48033e02f61241a3ec8
     profiles:
       - tracing
     networks:
