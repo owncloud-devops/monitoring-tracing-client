@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   telegraf:
-    image: telegraf:1.24.2@sha256:c041b149b338b1edeac1d9cfdaed9531842621e20d3863e04034fb8bfa897f67
+    image: telegraf:1.24.2@sha256:eb1a6c7cfb61e6deb727830ccedbba4844fdc3d2f6544f08a66bafc70423ff70
     user: telegraf:${HOST_DOCKER_GROUP_ID} # host docker group id, so that telegraf has access to the docker socket
     profiles:
       - monitoring
